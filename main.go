@@ -4,6 +4,7 @@ package main
 import (
 	_ "embed"
 	"github.com/getlantern/systray"
+	"github.com/shirou/gopsutil/process"
 	"log"
 	"os"
 	"os/exec"
@@ -59,10 +60,32 @@ func cleanup(isExitFlag bool) {
 	}
 }
 
+func isRunning() bool {
+	//currProcPid := int32(os.Process{}.Pid)
+	//currProc, _ := process.NewProcess(currProcPid)
+	//currProcName, _ := currProc.Name()
+	//fmt.Printf("当前PID: %d, 当前进程名: %s\n", currProcPid, currProcName)
+	procList, _ := process.Processes()
+	for _, proc := range procList {
+		name, _ := proc.Name()
+		//fmt.Printf("PID: %d, 进程名: %s\n", proc.Pid, name)
+		if name == "serv_core.exe" {
+			return true
+		}
+	}
+	return false
+}
+
 // build tag -ldflags "-w -s -H=windowsgui"
 func main() {
+	if isRunning() {
+		log.Println("已运行。。。")
+		return
+	}
 	// Initial start of the service based on saved state
-	startServ(proxyState.TunEnabled)
+	if !startServ(proxyState.TunEnabled) {
+		return
+	}
 
 	// Set up signal handling for graceful shutdown (e.g., Ctrl+C in console)
 	mainSign := make(chan os.Signal, 1)

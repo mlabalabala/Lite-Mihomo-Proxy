@@ -1,10 +1,13 @@
 module Mihomo-Proxy
 
-go 1.23.6
+go 1.24.0
+
+toolchain go1.24.11
 
 require (
 	github.com/getlantern/systray v1.2.2
-	golang.org/x/sys v0.35.0
+	github.com/shirou/gopsutil v3.21.11+incompatible
+	golang.org/x/sys v0.38.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
@@ -15,6 +18,10 @@ require (
 	github.com/getlantern/hex v0.0.0-20190417191902-c6586a6fe0b7 // indirect
 	github.com/getlantern/hidden v0.0.0-20190325191715-f02dbb02be55 // indirect
 	github.com/getlantern/ops v0.0.0-20190325191751-d70cb0d6f85f // indirect
+	github.com/go-ole/go-ole v1.2.6 // indirect
 	github.com/go-stack/stack v1.8.0 // indirect
 	github.com/oxtoacart/bpool v0.0.0-20190530202638-03653db5a59c // indirect
+	github.com/tklauser/go-sysconf v0.3.16 // indirect
+	github.com/tklauser/numcpus v0.11.0 // indirect
+	github.com/yusufpapurcu/wmi v1.2.4 // indirect
 )

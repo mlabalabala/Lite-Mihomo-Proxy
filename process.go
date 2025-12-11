@@ -11,7 +11,7 @@ import (
 )
 
 // 启动核心
-func startServ(isTun bool) {
+func startServ(isTun bool) bool {
 	serv.mu.Lock()
 	defer serv.mu.Unlock()
 
@@ -24,7 +24,7 @@ func startServ(isTun bool) {
 	currentPath := filepath.Dir(exePath)
 
 	logPath := filepath.Join(currentPath, "serv.log")
-	servExe := filepath.Join(currentPath, "serv.exe")
+	servExe := filepath.Join(currentPath, "serv_core.exe")
 	config := filepath.Join(currentPath, "config.yaml")
 	configEnSt, newProxyAddr, _ := parseConfig(isTun, config)
 
@@ -48,7 +48,7 @@ func startServ(isTun bool) {
 	logFile, err := os.OpenFile(logPath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
 	if err != nil {
 		log.Println("无法创建日志文件:", err)
-		return
+		return false
 	}
 	serv.LogFile = logFile
 
@@ -63,13 +63,13 @@ func startServ(isTun bool) {
 
 	// 启动进程
 	if err := serv.ServCmd.Start(); err != nil {
-		log.Printf("启动 serv.exe 失败: %v\n", err)
+		log.Printf("核心启动失败: %v\n", err)
 		err := serv.LogFile.Close()
 		if nil != err {
 			log.Fatal("日志文件关闭失败!\n", err)
 		}
 		serv.LogFile = nil
-		return
+		return false
 	}
 
 	serv.ServPID = serv.ServCmd.Process.Pid
@@ -86,6 +86,7 @@ func startServ(isTun bool) {
 
 	log.Printf("serv.exe 已启动。 (PID: %d)\n", serv.ServPID)
 	log.Printf("日志文件: %s\n", logPath)
+	return true
 }
 
 // 监控进程
